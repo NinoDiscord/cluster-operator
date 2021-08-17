@@ -9,11 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Login
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.DOCKER_URL }} -u admin --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login registry.floofy.dev -u august --password-stdin
       - name: Build
-        run: docker build -t ${{ secrets.DOCKER_URL }}/mika/cluster-operator:${{github.sha}} .
+        run: docker build -t registry.floofy.dev/nino/cluster-operator:${{github.sha}} .
       - name: Push
-        run: docker push ${{ secrets.DOCKER_URL }}/mika/cluster-operator:${{github.sha}}
+        run: docker push registry.floofy.dev/nino/cluster-operator:${{github.sha}}
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -24,11 +24,9 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
       - name: Set image
         run: |
-          kubectl set image deployment/beta-operator beta-operator=${{ secrets.DOCKER_URL }}/mika/cluster-operator:${{github.sha}}
-          kubectl set image deployment/premium-operator premium-operator=${{ secrets.DOCKER_URL }}/mika/cluster-operator:${{github.sha}}
-          kubectl set image deployment/main-operator main-operator=${{ secrets.DOCKER_URL }}/mika/cluster-operator:${{github.sha}}
+          kubectl set image deployment/nino-prod-operator beta-operator=registry.floofy.dev/mika/cluster-operator:${{github.sha}}
+          kubectl set image deployment/nino-edge-operator premium-operator=registry.floofy.dev/mika/cluster-operator:${{github.sha}}
       - name: Rollout status
         run: |
-          kubectl rollout status deployment/beta-operator
-          kubectl rollout status deployment/premium-operator
-          kubectl rollout status deployment/main-operator
+          kubectl rollout status deployment/nino-prod-operator
+          kubectl rollout status deployment/nino-edge-operator
