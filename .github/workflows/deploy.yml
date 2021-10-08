@@ -25,8 +25,8 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
       - name: Set image
         run: |
-          kubectl set image deployment/nino-prod-operator beta-operator=registry.floofy.dev/mika/cluster-operator:${{github.sha}}
-          kubectl set image deployment/nino-edge-operator premium-operator=registry.floofy.dev/mika/cluster-operator:${{github.sha}}
+          kubectl set image deployment/nino-prod-operator nino-prod-operator=registry.floofy.dev/mika/cluster-operator:${{github.sha}}
+          kubectl set image deployment/nino-edge-operator nino-edge-operator=registry.floofy.dev/mika/cluster-operator:${{github.sha}}
       - name: Rollout status
         run: |
           kubectl rollout status deployment/nino-prod-operator
